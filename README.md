@@ -77,6 +77,8 @@ Our project idea is to build a book club web application. The core concepts in t
 
 If we can get ambitious we will attempt to implement WebRTC for real-time video streaming. We'll add some CI/CD pipelines to allow for the deployment of new versions and set automated deployment dependent on tests passing.
 
+Project Name: The Public Square
+
 ### Technologies
 
 The stack will be the following:
@@ -84,9 +86,10 @@ The stack will be the following:
 - React/Shadcn frontend using TypeScript
 - WebRTC for video streaming
 - Python/FastAPI/Alembic backend
-- PostgresSQL database
+- PostgreSQL database
 - GitHub Actions for CI/CD
-- CodeQL SAST scanning
+  - CodeQL SAST scanning
+  - Flake8 for linting (PEP8, McCabe, PyFlakes)
 - Docker
 - Selenium
 - Google cloud for web hosting
