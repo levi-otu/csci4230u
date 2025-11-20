@@ -1,4 +1,4 @@
-name: Lab 8 DevOps - Tests CI Pipeline
+name: Tests CI Pipeline
 on: [push, pull_request]
 jobs:
   test:
@@ -27,5 +27,5 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}  # Add in Repo Settings → Secrets and variables → Actions
+          token: ${{ secrets.CODECOV_TOKEN }} # Add in Repo Settings → Secrets and variables → Actions
 
