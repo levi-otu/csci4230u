@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
 import { AppLayout } from '@/global/components/AppLayout';
 import { homeRoutes } from '@/modules/home/routes';
+import { loginRoutes } from '@/modules/login/routes';
 import { SidebarProvider } from '@/global/contexts/SidebarContext';
 
 // Placeholder pages for navigation items
@@ -15,6 +16,9 @@ const PlaceholderPage = ({ title }: { title: string }) => (
 );
 
 const routes: RouteObject[] = [
+  // Authentication routes (no layout)
+  ...loginRoutes,
+  // Protected routes with layout
   {
     element: (
       <SidebarProvider>
