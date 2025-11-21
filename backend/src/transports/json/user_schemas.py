@@ -29,7 +29,7 @@ class UserUpdate(BaseModel):
     is_active: bool | None = None
 
 
-class UserResponse(UserBase, TimestampMixin):
+class UserResponse(UserBase):
     """Schema for user response."""
 
     id: UUID
