@@ -20,11 +20,13 @@ import {
 import { Badge } from '@/global/components/ui/badge';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/global/contexts/ThemeContext';
+import { useAuth } from '@/global/hooks/useAuth';
 
 export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { logout, user } = useAuth();
 
   // Generate breadcrumbs from current path
   const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -36,8 +38,10 @@ export function Header() {
   });
 
   const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log('Logout clicked');
+    // Clear Redux auth state and session storage
+    logout();
+    // Redirect to login page
+    navigate('/login');
   };
 
   const handleSettings = () => {
@@ -119,9 +123,11 @@ export function Header() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">User Name</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user?.full_name || user?.username || 'User'}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    user@example.com
+                    {user?.email || 'user@example.com'}
                   </p>
                 </div>
               </DropdownMenuLabel>
