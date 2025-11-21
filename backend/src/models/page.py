@@ -2,11 +2,12 @@
 import uuid
 from datetime import datetime
 
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Table
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from src.models.base import Base, BaseModel
+from src.models.base import Base, BaseModel, utc_now
 
 # Association table for user-page many-to-many relationship
 user_pages = Table(
@@ -14,12 +15,25 @@ user_pages = Table(
     Base.metadata,
     Column("user_id", UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True),
     Column("page_id", UUID(as_uuid=True), ForeignKey("pages.id"), primary_key=True),
-    Column("join_date", DateTime, default=datetime.utcnow, nullable=False),
+    Column("join_date", DateTime, default=utc_now, nullable=False),
 )
 
 
-class Page(BaseModel):
-    """Page model for discussion topics (Reddit-style)."""
+class PageModel(PydanticBaseModel):
+    """Application/domain model for page information."""
+    id: uuid.UUID
+    name: str
+    description: str | None = None
+    topic: str | None = None
+    created_by: uuid.UUID
+    is_active: bool = True
+
+    class Config:
+        from_attributes = True
+
+
+class PageORM(BaseModel):
+    """ORM model for discussion topics (Reddit-style)."""
 
     __tablename__ = "pages"
 
@@ -35,8 +49,8 @@ class Page(BaseModel):
 
     # Relationships
     followers = relationship(
-        "User",
+        "UserORM",
         secondary=user_pages,
         back_populates="pages"
     )
-    creator = relationship("User", foreign_keys=[created_by])
+    creator = relationship("UserORM", foreign_keys=[created_by])

@@ -1,14 +1,14 @@
 """Authentication handler for user registration and login."""
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.user import User, UserSecurity
+from src.models.user import UserModel, UserSecurityModel
 from src.security import create_access_token, get_password_hash, verify_password
-from src.storage.data.sql.user_repository import (
-    UserRepository,
-    UserSecurityRepository,
+from src.storage.data.sql.users.storage import (
+    UserStorage,
+    UserSecurityStorage,
 )
 from src.transports.json.auth_schemas import (
     LoginRequest,
@@ -16,6 +16,8 @@ from src.transports.json.auth_schemas import (
     TokenResponse,
 )
 
+
+import uuid
 
 class AuthHandler:
     """Handler for authentication operations."""
@@ -28,8 +30,8 @@ class AuthHandler:
             session: Database session.
         """
         self.session = session
-        self.user_repo = UserRepository(session)
-        self.security_repo = UserSecurityRepository(session)
+        self.user_repo = UserStorage(session)
+        self.security_repo = UserSecurityStorage(session)
 
     async def register(self, request: RegisterRequest) -> TokenResponse:
         """
@@ -62,6 +64,8 @@ class AuthHandler:
 
         # Create user
         user = await self.user_repo.create(
+            # generate uuid for id
+            id=uuid.uuid4(),
             username=request.username,
             email=request.email,
             full_name=request.full_name,
@@ -74,7 +78,7 @@ class AuthHandler:
             user_id=user.id,
             email=request.email,
             password=hashed_password,
-            password_changed_at=datetime.utcnow()
+            password_changed_at=datetime.now(timezone.utc).replace(tzinfo=None)
         )
 
         # Generate token

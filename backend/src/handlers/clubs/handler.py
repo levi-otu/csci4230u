@@ -5,9 +5,9 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.club import Club
-from src.models.user import User
-from src.storage.data.sql.club_repository import ClubRepository
+from src.models.club import ClubModel
+from src.models.user import UserModel
+from src.storage.data.sql.clubs.storage import ClubStorage
 from src.transports.json.club_schemas import ClubCreate, ClubResponse, ClubUpdate
 
 
@@ -22,12 +22,12 @@ class ClubHandler:
             session: Database session.
         """
         self.session = session
-        self.club_repo = ClubRepository(session)
+        self.club_repo = ClubStorage(session)
 
     async def create_club(
         self,
         request: ClubCreate,
-        current_user: User
+        current_user: UserModel
     ) -> ClubResponse:
         """
         Create a new club.
@@ -94,7 +94,7 @@ class ClubHandler:
         self,
         club_id: UUID,
         request: ClubUpdate,
-        current_user: User
+        current_user: UserModel
     ) -> ClubResponse:
         """
         Update a club.
@@ -133,7 +133,7 @@ class ClubHandler:
     async def delete_club(
         self,
         club_id: UUID,
-        current_user: User
+        current_user: UserModel
     ) -> bool:
         """
         Delete a club.

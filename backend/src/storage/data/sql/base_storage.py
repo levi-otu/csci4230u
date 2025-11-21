@@ -1,4 +1,4 @@
-"""Base repository with generic CRUD operations."""
+"""Base storage with generic CRUD operations."""
 from typing import Any, Generic, List, Optional, Type, TypeVar
 from uuid import UUID
 
@@ -10,12 +10,12 @@ from src.models.base import BaseModel
 ModelType = TypeVar("ModelType", bound=BaseModel)
 
 
-class BaseRepository(Generic[ModelType]):
-    """Generic repository for CRUD operations."""
+class BaseStorage(Generic[ModelType]):
+    """Generic storage for CRUD operations."""
 
     def __init__(self, model: Type[ModelType], session: AsyncSession):
         """
-        Initialize repository.
+        Initialize storage.
 
         Args:
             model: The SQLAlchemy model class.

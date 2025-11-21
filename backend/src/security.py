@@ -1,5 +1,5 @@
 """Security utilities for JWT authentication and password hashing."""
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 from jose import JWTError, jwt
@@ -15,6 +15,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     Verify a plain password against a hashed password.
 
+    Bcrypt has a 72-byte limit, so passwords are truncated to 72 bytes.
+
     Args:
         plain_password: The plain text password to verify.
         hashed_password: The hashed password to verify against.
@@ -22,12 +24,16 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         bool: True if password matches, False otherwise.
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    # Truncate password to 72 bytes for bcrypt compatibility
+    truncated_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    return pwd_context.verify(truncated_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
     """
     Hash a password using bcrypt.
+
+    Bcrypt has a 72-byte limit, so passwords are truncated to 72 bytes.
 
     Args:
         password: The plain text password to hash.
@@ -35,7 +41,9 @@ def get_password_hash(password: str) -> str:
     Returns:
         str: The hashed password.
     """
-    return pwd_context.hash(password)
+    # Truncate password to 72 bytes for bcrypt compatibility
+    truncated_password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    return pwd_context.hash(truncated_password)
 
 
 def create_access_token(
@@ -53,9 +61,9 @@ def create_access_token(
         str: The encoded JWT token.
     """
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(
+        expire = datetime.now(timezone.utc) + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
 

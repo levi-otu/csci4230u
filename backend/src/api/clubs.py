@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_active_user
 from src.database import get_db
-from src.handlers.clubs.club_handler import ClubHandler
-from src.models.user import User
+from src.handlers.clubs.handler import ClubHandler
+from src.models.user import UserModel
 from src.transports.json.club_schemas import ClubCreate, ClubResponse, ClubUpdate
 
 router = APIRouter(prefix="/api/clubs", tags=["clubs"])
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/clubs", tags=["clubs"])
 async def create_club(
     request: ClubCreate,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> ClubResponse:
     """
     Create a new club.
@@ -80,7 +80,7 @@ async def update_club(
     club_id: UUID,
     request: ClubUpdate,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> ClubResponse:
     """
     Update a club.
@@ -102,7 +102,7 @@ async def update_club(
 async def delete_club(
     club_id: UUID,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> None:
     """
     Delete a club.

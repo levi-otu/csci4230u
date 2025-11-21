@@ -6,9 +6,9 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_db
-from src.models.user import User
+from src.models.user import UserModel as User
 from src.security import verify_token
-from src.storage.data.sql.user_repository import UserRepository
+from src.storage.data.sql.users.storage import UserStorage
 
 security = HTTPBearer()
 
@@ -48,7 +48,7 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user_repo = UserRepository(session)
+    user_repo = UserStorage(session)
     user = await user_repo.get_by_id(user_id)
 
     if user is None:

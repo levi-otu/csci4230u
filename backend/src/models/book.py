@@ -1,6 +1,8 @@
 """Book models for library management."""
 import uuid
+from datetime import date
 
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Column, Date, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -8,8 +10,19 @@ from sqlalchemy.orm import relationship
 from src.models.base import BaseModel
 
 
-class Publisher(BaseModel):
-    """Publisher model for book publishers."""
+class PublisherModel(PydanticBaseModel):
+    """Application/domain model for publisher information."""
+    id: uuid.UUID
+    name: str
+    country: str | None = None
+    website: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class PublisherORM(BaseModel):
+    """ORM model for book publishers."""
 
     __tablename__ = "publishers"
 
@@ -19,14 +32,27 @@ class Publisher(BaseModel):
 
     # Relationships
     book_versions = relationship(
-        "BookVersion",
+        "BookVersionORM",
         back_populates="publisher",
         cascade="all, delete-orphan"
     )
 
 
-class Book(BaseModel):
-    """Book model for storing book information."""
+class BookModel(PydanticBaseModel):
+    """Application/domain model for book information."""
+    id: uuid.UUID
+    title: str
+    author: str
+    date_of_first_publish: date | None = None
+    genre: str | None = None
+    description: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class BookORM(BaseModel):
+    """ORM model for storing book information."""
 
     __tablename__ = "books"
 
@@ -38,14 +64,29 @@ class Book(BaseModel):
 
     # Relationships
     versions = relationship(
-        "BookVersion",
+        "BookVersionORM",
         back_populates="book",
         cascade="all, delete-orphan"
     )
 
 
-class BookVersion(BaseModel):
-    """Book version model for different editions and publications."""
+class BookVersionModel(PydanticBaseModel):
+    """Application/domain model for book version information."""
+    id: uuid.UUID
+    book_id: uuid.UUID
+    publisher_id: uuid.UUID | None = None
+    isbn: str
+    publish_date: date | None = None
+    edition: str | None = None
+    editors: str | None = None
+    editor_info: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class BookVersionORM(BaseModel):
+    """ORM model for different editions and publications."""
 
     __tablename__ = "book_versions"
 
@@ -68,5 +109,5 @@ class BookVersion(BaseModel):
     editor_info = Column(Text, nullable=True)
 
     # Relationships
-    book = relationship("Book", back_populates="versions")
-    publisher = relationship("Publisher", back_populates="book_versions")
+    book = relationship("BookORM", back_populates="versions")
+    publisher = relationship("PublisherORM", back_populates="book_versions")

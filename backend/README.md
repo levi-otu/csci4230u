@@ -10,7 +10,7 @@ FastAPI backend for The Public Square book club application.
 - **Alembic Migrations** - Database schema version control
 - **JWT Authentication** - Secure token-based authentication
 - **Pydantic Validation** - Request/response validation
-- **Repository Pattern** - Clean separation of data access
+- **Storage Pattern** - Clean separation of data access
 - **Pytest Testing** - Comprehensive test suite with 80% coverage target
 - **PEP 8 Compliant** - Follows Python coding standards
 
@@ -61,7 +61,7 @@ backend/
 │   ├── conftest.py              # Pytest fixtures
 │   ├── test_api/                # API endpoint tests
 │   ├── test_handlers/           # Handler tests
-│   └── test_storage/            # Repository tests
+│   └── test_storage/            # Storage tests
 ├── alembic/                      # Database migrations
 ├── .env                          # Environment variables
 ├── alembic.ini                   # Alembic configuration

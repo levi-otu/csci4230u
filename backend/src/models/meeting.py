@@ -1,6 +1,8 @@
 """Meeting models for scheduling meetings."""
 import uuid
+from datetime import datetime
 
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -8,8 +10,26 @@ from sqlalchemy.orm import relationship
 from src.models.base import BaseModel
 
 
-class Meeting(BaseModel):
-    """Meeting model for both club and user meetings."""
+class MeetingModel(PydanticBaseModel):
+    """Application/domain model for meeting information."""
+    id: uuid.UUID
+    name: str
+    description: str | None = None
+    status: str = "scheduled"
+    scheduled_start: datetime
+    scheduled_end: datetime
+    actual_start: datetime | None = None
+    actual_end: datetime | None = None
+    duration: int
+    created_by: uuid.UUID
+    club_id: uuid.UUID | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class MeetingORM(BaseModel):
+    """ORM model for both club and user meetings."""
 
     __tablename__ = "meetings"
 
@@ -37,10 +57,10 @@ class Meeting(BaseModel):
     )
 
     # Relationships
-    creator = relationship("User", foreign_keys=[created_by])
-    club = relationship("Club", foreign_keys=[club_id])
+    creator = relationship("UserORM", foreign_keys=[created_by])
+    club = relationship("ClubORM", foreign_keys=[club_id])
     club_meetings = relationship(
-        "ClubMeeting",
+        "ClubMeetingORM",
         back_populates="meeting",
         cascade="all, delete-orphan"
     )

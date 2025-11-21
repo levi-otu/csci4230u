@@ -2,6 +2,7 @@
 import uuid
 from datetime import datetime
 
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -9,11 +10,24 @@ from sqlalchemy.orm import relationship
 from src.models.base import BaseModel
 
 
-class User(BaseModel):
+class UserModel(PydanticBaseModel):
+    """Application/domain model for user information."""
+    id: uuid.UUID
+    username: str
+    email: str
+    full_name: str | None = None
+    is_active: bool = True
+
+    class Config:
+        from_attributes = True
+
+
+class UserORM(BaseModel):
     """User model for storing user information."""
 
     __tablename__ = "users"
 
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String(255), unique=True, nullable=False, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     full_name = Column(String(255), nullable=True)
@@ -21,34 +35,35 @@ class User(BaseModel):
 
     # Relationships
     security = relationship(
-        "UserSecurity",
+        "UserSecurityORM",
         back_populates="user",
         uselist=False,
         cascade="all, delete-orphan"
     )
-    roles = relationship(
-        "Role",
-        secondary="user_roles",
-        back_populates="users"
-    )
-    groups = relationship(
-        "Group",
-        secondary="user_groups",
-        back_populates="users"
-    )
     clubs = relationship(
-        "Club",
+        "ClubORM",
         secondary="user_clubs",
         back_populates="members"
     )
     pages = relationship(
-        "Page",
+        "PageORM",
         secondary="user_pages",
         back_populates="followers"
     )
 
+class UserSecurityModel(PydanticBaseModel):
+    """Application/domain model for user security information."""
+    user_id: uuid.UUID
+    email: str
+    password: str
+    old_password: str | None = None
+    password_changed_at: datetime | None = None
 
-class UserSecurity(BaseModel):
+    class Config:
+        from_attributes = True
+
+
+class UserSecurityORM(BaseModel):
     """User security model for storing authentication credentials."""
 
     __tablename__ = "user_security"
@@ -66,4 +81,4 @@ class UserSecurity(BaseModel):
     password_changed_at = Column(DateTime, nullable=True)
 
     # Relationships
-    user = relationship("User", back_populates="security")
+    user = relationship("UserORM", back_populates="security")

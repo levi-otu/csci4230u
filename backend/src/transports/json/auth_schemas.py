@@ -7,7 +7,7 @@ class RegisterRequest(BaseModel):
 
     username: str = Field(..., min_length=3, max_length=255)
     email: EmailStr
-    password: str = Field(..., min_length=8, max_length=255)
+    password: str = Field(..., min_length=8, max_length=72, description="Password (max 72 characters due to bcrypt limitation)")
     full_name: str | None = Field(None, max_length=255)
 
 
