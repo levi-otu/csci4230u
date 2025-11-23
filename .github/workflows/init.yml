@@ -3,9 +3,6 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -13,10 +10,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.10
 
-      - name: Install Flake8
-        run: pip install flake8
-
-      - name: Run Flake8
-        run: flake8 app.py test_app.py
+      - name: flake8 Link
+        uses: py-actions/flake8@v2
