@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend
-          uv sync
+          uv sync --extra dev
 
       - name: Create test database
         run: |
@@ -54,7 +54,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd backend
-          uv run pytest --cov=src tests/
+          uv run pytest tests/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
