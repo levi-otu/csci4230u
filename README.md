@@ -77,6 +77,8 @@ Our project idea is to build a book club web application. The core concepts in t
 
 If we can get ambitious we will attempt to implement WebRTC for real-time video streaming. We'll add some CI/CD pipelines to allow for the deployment of new versions and set automated deployment dependent on tests passing.
 
+It will also feature a user library where it has a ISBN lookup to an external api (https://www.vinzius.com/post/free-and-paid-api-isbn/).
+
 Project Name: The Public Square
 
 ### Technologies
