@@ -11,6 +11,7 @@ help:
 	@echo "  make migrate        - Run database migrations"
 	@echo "  make test           - Run tests"
 	@echo "  make clean          - Clean up generated files"
+	@echo "  make start          - Start the application server and PostgreSQL service"
 
 # Step 1-3: Install uv, PostgreSQL, and start services
 setup:
@@ -131,4 +132,5 @@ clean:
 	@echo "✓ Cleanup complete"
 
 start:
+	sudo service postgresql start
 	uv run uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
