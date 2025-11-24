@@ -9,6 +9,7 @@ from src.models.club import ClubModel, UserClubModel
 from src.models.user import UserModel
 from src.storage.data.sql.clubs.storage import ClubStorage
 from src.storage.data.sql.user.clubs.storage import UserClubStorage
+from src.storage.data.sql.users.storage import UserStorage
 from src.transports.json.club_schemas import (
     AddUserToClub,
     ClubCreate,
@@ -31,6 +32,7 @@ class ClubHandler:
         self.session = session
         self.club_repo = ClubStorage(session)
         self.user_club_repo = UserClubStorage(session)
+        self.user_repo = UserStorage(session)
 
     async def create_club(
         self,
@@ -305,10 +307,23 @@ class ClubHandler:
 
         # Get all members
         memberships = await self.user_club_repo.get_club_members(club_id)
-        return [
-            UserClubResponse.model_validate(membership)
-            for membership in memberships
-        ]
+
+        # Enrich with user details
+        responses = []
+        for membership in memberships:
+            user = await self.user_repo.get_by_id(membership.user_id)
+            response_data = {
+                "user_id": membership.user_id,
+                "club_id": membership.club_id,
+                "join_date": membership.join_date,
+                "role": membership.role,
+                "username": user.username if user else None,
+                "full_name": user.full_name if user else None,
+                "email": user.email if user else None,
+            }
+            responses.append(UserClubResponse(**response_data))
+
+        return responses
 
     async def remove_user_from_club(
         self,

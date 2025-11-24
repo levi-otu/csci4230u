@@ -1,13 +1,13 @@
 """Book models for library management."""
 import uuid
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel as PydanticBaseModel
-from sqlalchemy import Column, Date, ForeignKey, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text, Table
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from src.models.base import BaseModel
+from src.models.base import BaseModel, utc_now
 
 
 class PublisherModel(PydanticBaseModel):
@@ -46,6 +46,13 @@ class BookModel(PydanticBaseModel):
     date_of_first_publish: date | None = None
     genre: str | None = None
     description: str | None = None
+    cover_image_url: str | None = None
+    # Multi-volume series support
+    series_title: str | None = None
+    volume_number: int | None = None
+    volume_title: str | None = None
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
@@ -61,10 +68,20 @@ class BookORM(BaseModel):
     date_of_first_publish = Column(Date, nullable=True)
     genre = Column(String(100), nullable=True, index=True)
     description = Column(Text, nullable=True)
+    cover_image_url = Column(String(1000), nullable=True)
+    # Multi-volume series support
+    series_title = Column(String(500), nullable=True)
+    volume_number = Column(Integer, nullable=True)
+    volume_title = Column(String(500), nullable=True)
 
     # Relationships
     versions = relationship(
         "BookVersionORM",
+        back_populates="book",
+        cascade="all, delete-orphan"
+    )
+    user_books = relationship(
+        "UserBookORM",
         back_populates="book",
         cascade="all, delete-orphan"
     )
@@ -111,3 +128,141 @@ class BookVersionORM(BaseModel):
     # Relationships
     book = relationship("BookORM", back_populates="versions")
     publisher = relationship("PublisherORM", back_populates="book_versions")
+
+
+# User Library Models
+
+class UserBookModel(PydanticBaseModel):
+    """Application/domain model for user's book in their library."""
+    id: uuid.UUID
+    user_id: uuid.UUID
+    book_id: uuid.UUID
+    book_version_id: uuid.UUID | None = None
+    added_date: datetime
+    is_read: bool = False
+    read_date: datetime | None = None
+    reading_status: str = 'unread'  # 'unread', 'reading', 'finished'
+    rating: float | None = None  # 0.0 to 5.0
+    review: str | None = None
+    notes: str | None = None
+    is_favorite: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class UserBookORM(BaseModel):
+    """ORM model for user's book library."""
+
+    __tablename__ = "user_books"
+
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    book_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("books.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    book_version_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("book_versions.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True
+    )
+    added_date = Column(DateTime, default=utc_now, nullable=False)
+    is_read = Column(Boolean, default=False, nullable=False)
+    read_date = Column(DateTime, nullable=True)
+    reading_status = Column(String(20), default='unread', nullable=False)  # 'unread', 'reading', 'finished'
+    rating = Column(Float, nullable=True)  # 0.0 to 5.0
+    review = Column(Text, nullable=True)
+    notes = Column(Text, nullable=True)
+    is_favorite = Column(Boolean, default=False, nullable=False)
+
+    # Relationships
+    book = relationship("BookORM", back_populates="user_books")
+    book_version = relationship("BookVersionORM")
+    reading_list_items = relationship(
+        "ReadingListItemORM",
+        back_populates="user_book",
+        cascade="all, delete-orphan"
+    )
+
+
+class ReadingListModel(PydanticBaseModel):
+    """Application/domain model for user's reading list."""
+    id: uuid.UUID
+    user_id: uuid.UUID
+    name: str
+    description: str | None = None
+    created_date: datetime
+    is_default: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class ReadingListORM(BaseModel):
+    """ORM model for user's reading lists."""
+
+    __tablename__ = "reading_lists"
+
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    name = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    created_date = Column(DateTime, default=utc_now, nullable=False)
+    is_default = Column(Boolean, default=False, nullable=False)
+
+    # Relationships
+    items = relationship(
+        "ReadingListItemORM",
+        back_populates="reading_list",
+        cascade="all, delete-orphan",
+        order_by="ReadingListItemORM.order_index"
+    )
+
+
+class ReadingListItemModel(PydanticBaseModel):
+    """Application/domain model for items in a reading list."""
+    id: uuid.UUID
+    reading_list_id: uuid.UUID
+    user_book_id: uuid.UUID
+    order_index: int
+    added_date: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ReadingListItemORM(BaseModel):
+    """ORM model for reading list items (ordered)."""
+
+    __tablename__ = "reading_list_items"
+
+    reading_list_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("reading_lists.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    user_book_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("user_books.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    order_index = Column(Integer, nullable=False)
+    added_date = Column(DateTime, default=utc_now, nullable=False)
+
+    # Relationships
+    reading_list = relationship("ReadingListORM", back_populates="items")
+    user_book = relationship("UserBookORM", back_populates="reading_list_items")

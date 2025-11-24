@@ -92,5 +92,8 @@ class UserClubResponse(BaseModel):
     club_id: UUID
     join_date: datetime
     role: str
+    username: str | None = None
+    full_name: str | None = None
+    email: str | None = None
 
     model_config = ConfigDict(from_attributes=True)

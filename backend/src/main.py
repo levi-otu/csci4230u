@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api import auth, books, clubs, meetings, pages, users
+from src.api import auth, books, clubs, library, meetings, pages, users
 from src.config import settings
 
 # Import all models to ensure they're registered with SQLAlchemy
@@ -28,6 +28,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router)
 app.include_router(clubs.router)
+app.include_router(library.router)
 app.include_router(meetings.router)
 app.include_router(pages.router)
 app.include_router(books.router)
