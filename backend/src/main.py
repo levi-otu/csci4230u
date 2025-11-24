@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.api import auth, books, clubs, meetings, pages, users
 from src.config import settings
 
+# Import all models to ensure they're registered with SQLAlchemy
+from src.models import *  # noqa: F401, F403
+
 # Create FastAPI app
 app = FastAPI(
     title=settings.APP_NAME,

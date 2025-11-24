@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import declarative_base
 
 from src.config import settings
+from src.models.base import Base  # Import the shared Base from models
 
 # Create async engine
 engine = create_async_engine(
@@ -25,9 +25,6 @@ AsyncSessionLocal = async_sessionmaker(
     autocommit=False,
     autoflush=False,
 )
-
-# Create declarative base for models
-Base = declarative_base()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
