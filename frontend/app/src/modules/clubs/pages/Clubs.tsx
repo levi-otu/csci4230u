@@ -15,7 +15,6 @@ import {
   joinClubAsync,
 } from '@/global/store/slices';
 import { Button } from '@/global/components/ui/button';
-import { Separator } from '@/global/components/ui/separator';
 import { ClubCard } from '../components/ClubCard';
 import { CreateClubModal } from '../components/CreateClubModal';
 import type { CreateClubRequest } from '@/global/models/club.models';
@@ -26,7 +25,7 @@ import type { CreateClubRequest } from '@/global/models/club.models';
 export const Clubs: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { allClubs, userClubs, isLoading, isCreating, isJoining } =
+  const { allClubs, userClubs, isLoading, isCreating } =
     useAppSelector((state) => state.clubs);
   const { user } = useAppSelector((state) => state.auth);
 

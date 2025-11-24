@@ -46,6 +46,9 @@ export interface UserClubMembership {
   club_id: string;
   join_date: string;
   role: 'member' | 'owner';
+  username?: string | null;
+  full_name?: string | null;
+  email?: string | null;
 }
 
 /**

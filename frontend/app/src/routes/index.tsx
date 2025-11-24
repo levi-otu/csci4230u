@@ -4,6 +4,7 @@ import { AppLayout } from '@/global/components/AppLayout';
 import { homeRoutes } from '@/modules/home/routes';
 import { loginRoutes } from '@/modules/login/routes';
 import { clubsRoutes } from '@/modules/clubs/routes';
+import { libraryRoutes } from '@/modules/library/routes';
 import { SidebarProvider } from '@/global/contexts/SidebarContext';
 
 // Placeholder pages for navigation items
@@ -29,13 +30,10 @@ const routes: RouteObject[] = [
     children: [
       ...homeRoutes,
       ...clubsRoutes,
+      ...libraryRoutes,
       {
         path: '/pages',
         element: <PlaceholderPage title="Pages" />,
-      },
-      {
-        path: '/library',
-        element: <PlaceholderPage title="Library" />,
       },
       {
         path: '/settings',

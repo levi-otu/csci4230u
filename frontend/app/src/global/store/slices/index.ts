@@ -33,3 +33,33 @@ export {
 export type { ClubsState } from './clubsSlice';
 
 export { default as clubsReducer } from './clubsSlice';
+
+export {
+  fetchBooksAsync,
+  createBookAsync,
+  updateBookAsync,
+  lookupISBNAsync,
+  fetchMyLibraryAsync,
+  addToLibraryAsync,
+  updateUserBookAsync,
+  removeFromLibraryAsync,
+  markAsReadAsync,
+  markAsUnreadAsync,
+  setReadingStatusAsync,
+  toggleFavoriteAsync,
+  fetchReadingListsAsync,
+  fetchReadingListAsync,
+  createReadingListAsync,
+  addToReadingListAsync,
+  fetchLibraryStatsAsync,
+  clearError as clearLibraryError,
+  setSelectedBook,
+  setSelectedUserBook,
+  setLibraryFilters,
+  clearISBNLookup,
+  resetLibraryState,
+} from './librarySlice';
+
+export type { LibraryState } from './librarySlice';
+
+export { default as libraryReducer } from './librarySlice';

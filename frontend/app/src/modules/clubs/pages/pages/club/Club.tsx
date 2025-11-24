@@ -59,8 +59,9 @@ export const Club: React.FC = () => {
       // Convert UserClubMembership to Member format
       const members: Member[] = memberships.map((membership) => ({
         userId: membership.user_id,
-        username: membership.user_id, // TODO: Fetch actual username from user service
-        fullName: null,
+        username: membership.username || membership.user_id,
+        fullName: membership.full_name || null,
+        email: membership.email || undefined,
         role: membership.role as 'owner' | 'member',
         joinDate: membership.join_date,
       }));
