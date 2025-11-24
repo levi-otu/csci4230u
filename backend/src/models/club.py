@@ -7,6 +7,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
+    Enum,
     ForeignKey,
     Integer,
     String,
@@ -27,6 +28,22 @@ user_clubs = Table(
     Column("role", String(50), default="member", nullable=False),
 )
 
+class ClubRoles(Enum):
+    """Roles within a club."""
+    MEMBER = "member"
+    OWNER = "owner"
+
+
+class UserClubModel(PydanticBaseModel):
+    """Application/domain model for user-club membership."""
+    user_id: uuid.UUID
+    club_id: uuid.UUID
+    join_date: datetime
+    role: str = "member"
+
+    class Config:
+        from_attributes = True
+
 
 class ClubModel(PydanticBaseModel):
     """Application/domain model for club information."""
@@ -37,6 +54,8 @@ class ClubModel(PydanticBaseModel):
     created_by: uuid.UUID
     is_active: bool = True
     max_members: int | None = None
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True

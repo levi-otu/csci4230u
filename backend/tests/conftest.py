@@ -12,6 +12,19 @@ from src.config import settings
 from src.database import Base, get_db
 from src.main import app
 
+# Import all ORM models to register them with Base.metadata
+from src.models import (  # noqa: F401
+    BookORM,
+    BookVersionORM,
+    ClubMeetingORM,
+    ClubORM,
+    MeetingORM,
+    PageORM,
+    PublisherORM,
+    UserORM,
+    UserSecurityORM,
+)
+
 # Create test database engine
 test_engine = create_async_engine(
     settings.TEST_DATABASE_URL,

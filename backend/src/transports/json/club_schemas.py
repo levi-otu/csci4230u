@@ -1,4 +1,5 @@
 """Club-related schemas."""
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -35,6 +36,8 @@ class ClubResponse(ClubBase, TimestampMixin):
     """Schema for club response."""
 
     id: UUID
+    name: str
+    description: str | None
     created_by: UUID
     is_active: bool
 
@@ -71,5 +74,23 @@ class ClubMeetingResponse(ClubMeetingBase, TimestampMixin):
     id: UUID
     club_id: UUID
     meeting_id: UUID
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AddUserToClub(BaseModel):
+    """Schema for adding a user to a club."""
+
+    user_id: UUID
+    role: str = Field(default="member", pattern="^(member|owner)$")
+
+
+class UserClubResponse(BaseModel):
+    """Schema for user-club membership response."""
+
+    user_id: UUID
+    club_id: UUID
+    join_date: datetime
+    role: str
 
     model_config = ConfigDict(from_attributes=True)

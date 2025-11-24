@@ -3,7 +3,7 @@ from src.models.base import Base  # noqa: F401
 
 # Domain Models (Pydantic)
 from src.models.book import BookModel, BookVersionModel, PublisherModel  # noqa: F401
-from src.models.club import ClubModel, ClubMeetingModel  # noqa: F401
+from src.models.club import ClubModel, ClubMeetingModel, UserClubModel  # noqa: F401
 from src.models.meeting import MeetingModel  # noqa: F401
 from src.models.page import PageModel  # noqa: F401
 from src.models.user import UserModel, UserSecurityModel  # noqa: F401

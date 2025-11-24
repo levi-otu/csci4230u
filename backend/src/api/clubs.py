@@ -9,7 +9,13 @@ from src.api.deps import get_current_active_user
 from src.database import get_db
 from src.handlers.clubs.handler import ClubHandler
 from src.models.user import UserModel
-from src.transports.json.club_schemas import ClubCreate, ClubResponse, ClubUpdate
+from src.transports.json.club_schemas import (
+    AddUserToClub,
+    ClubCreate,
+    ClubResponse,
+    ClubUpdate,
+    UserClubResponse,
+)
 
 router = APIRouter(prefix="/api/clubs", tags=["clubs"])
 
@@ -74,6 +80,23 @@ async def get_club(
     handler = ClubHandler(session)
     return await handler.get_club(club_id)
 
+@router.get("/user/{user_id}", response_model=List[ClubResponse])
+async def get_user_clubs(
+    user_id: UUID,
+    session: AsyncSession = Depends(get_db)
+) -> List[ClubResponse]:
+    """
+    Get all clubs for a user.
+
+    Args:
+        user_id: The user ID.
+        session: Database session.
+
+    Returns:
+        List[ClubResponse]: List of clubs for the user.
+    """
+    handler = ClubHandler(session)
+    return await handler.get_user_clubs(user_id)
 
 @router.put("/{club_id}", response_model=ClubResponse)
 async def update_club(
@@ -114,3 +137,69 @@ async def delete_club(
     """
     handler = ClubHandler(session)
     await handler.delete_club(club_id, current_user)
+
+
+@router.post(
+    "/{club_id}/members",
+    response_model=UserClubResponse,
+    status_code=status.HTTP_201_CREATED
+)
+async def add_user_to_club(
+    club_id: UUID,
+    request: AddUserToClub,
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
+) -> UserClubResponse:
+    """
+    Add a user to a club.
+
+    Args:
+        club_id: The club ID.
+        request: Request containing user_id and role.
+        session: Database session.
+        current_user: Authenticated user.
+
+    Returns:
+        UserClubResponse: The created membership.
+    """
+    handler = ClubHandler(session)
+    return await handler.add_user_to_club(club_id, request, current_user)
+
+
+@router.get("/{club_id}/members", response_model=List[UserClubResponse])
+async def get_club_members(
+    club_id: UUID,
+    session: AsyncSession = Depends(get_db)
+) -> List[UserClubResponse]:
+    """
+    Get all members of a club.
+
+    Args:
+        club_id: The club ID.
+        session: Database session.
+
+    Returns:
+        List[UserClubResponse]: List of club members.
+    """
+    handler = ClubHandler(session)
+    return await handler.get_club_members(club_id)
+
+
+@router.delete("/{club_id}/members/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_user_from_club(
+    club_id: UUID,
+    user_id: UUID,
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
+) -> None:
+    """
+    Remove a user from a club (leave club).
+
+    Args:
+        club_id: The club ID.
+        user_id: The user ID to remove.
+        session: Database session.
+        current_user: Authenticated user.
+    """
+    handler = ClubHandler(session)
+    await handler.remove_user_from_club(club_id, user_id, current_user)
