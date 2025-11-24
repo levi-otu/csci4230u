@@ -11,3 +11,13 @@ export type {
   User,
   TokenData,
 } from './auth.models';
+
+// Club models
+export type {
+  Club,
+  CreateClubRequest,
+  UpdateClubRequest,
+  UserClubMembership,
+  AddUserToClubRequest,
+  ClubWithMetadata,
+} from './club.models';

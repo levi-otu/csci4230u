@@ -5,6 +5,7 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
+import clubsReducer from './slices/clubsSlice';
 
 /**
  * Configure and create the Redux store
@@ -12,7 +13,7 @@ import authReducer from './slices/authSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // Add other reducers here as your app grows
+    clubs: clubsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

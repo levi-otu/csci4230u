@@ -163,4 +163,23 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Restore cursor pointer for interactive elements */
+  button,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"],
+  a {
+    cursor: pointer;
+  }
+
+  /* Disabled buttons should use default cursor */
+  button:disabled,
+  [role="button"]:disabled,
+  [type="button"]:disabled,
+  [type="submit"]:disabled,
+  [type="reset"]:disabled {
+    cursor: not-allowed;
+  }
 }

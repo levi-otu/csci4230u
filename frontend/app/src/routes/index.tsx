@@ -3,6 +3,7 @@ import type { RouteObject } from 'react-router-dom';
 import { AppLayout } from '@/global/components/AppLayout';
 import { homeRoutes } from '@/modules/home/routes';
 import { loginRoutes } from '@/modules/login/routes';
+import { clubsRoutes } from '@/modules/clubs/routes';
 import { SidebarProvider } from '@/global/contexts/SidebarContext';
 
 // Placeholder pages for navigation items
@@ -27,10 +28,7 @@ const routes: RouteObject[] = [
     ),
     children: [
       ...homeRoutes,
-      {
-        path: '/clubs',
-        element: <PlaceholderPage title="Clubs" />,
-      },
+      ...clubsRoutes,
       {
         path: '/pages',
         element: <PlaceholderPage title="Pages" />,
