@@ -6,6 +6,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import LibraryService from '@/global/api/actions/library/api-library.service';
+import { extractErrorMessage } from '@/global/utils/errorHandler';
 import type {
   AddToLibraryRequest,
   AddToReadingListRequest,
@@ -115,9 +116,7 @@ export const createBookAsync = createAsyncThunk<
   try {
     return await LibraryService.createBook(data);
   } catch (error: any) {
-    return rejectWithValue(
-      error?.data?.detail || error?.message || 'Failed to create book'
-    );
+    return rejectWithValue(extractErrorMessage(error, 'Failed to create book'));
   }
 });
 
@@ -183,9 +182,7 @@ export const addToLibraryAsync = createAsyncThunk<
   try {
     return await LibraryService.addToLibrary(data);
   } catch (error: any) {
-    return rejectWithValue(
-      error?.data?.detail || error?.message || 'Failed to add book to library'
-    );
+    return rejectWithValue(extractErrorMessage(error, 'Failed to add book to library'));
   }
 });
 
