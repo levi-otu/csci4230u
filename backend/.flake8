@@ -12,13 +12,7 @@ exclude =
     *.egg-info,
     alembic/versions/*.py,
     .pytest_cache
-ignore =
-    E501,  # line too long (handled by max-line-length)
-    E128,  # continuation line under-indented
-    E122,  # continuation line missing indentation
-    E302,  # expected 2 blank lines
-    W291,  # trailing whitespace
-    W605,  # invalid escape sequence
+ignore = E501, E128, E122, E302, W291, W605
 per-file-ignores =
     __init__.py:F401,F403
     alembic/versions/*.py:E501,E128,E122,W291
