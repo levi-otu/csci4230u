@@ -35,7 +35,7 @@ jobs:
               run: |
                   BACKEND_IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${AR_REPO}/backend:${GITHUB_SHA}"
                   echo "BACKEND_IMAGE=$BACKEND_IMAGE" >> $GITHUB_ENV
-                  docker build -t "$BACKEND_IMAGE" -f Dockerfile backend/
+                  docker build -t "$BACKEND_IMAGE" -f backend/Dockerfile backend/
                   docker push "$BACKEND_IMAGE"
 
             # Build & push frontend image
