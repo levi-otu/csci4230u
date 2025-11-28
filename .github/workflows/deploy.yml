@@ -43,7 +43,7 @@ jobs:
               run: |
                   FRONTEND_IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${AR_REPO}/frontend:${GITHUB_SHA}"
                   echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
-                  docker build -t "$FRONTEND_IMAGE" -f frontend/Dockerfile .
+                  docker build -t "$FRONTEND_IMAGE" -f frontend/app/Dockerfile frontend/app/
                   docker push "$FRONTEND_IMAGE"
 
             # Deploy backend Cloud Run
