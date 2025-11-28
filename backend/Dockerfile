@@ -26,6 +26,7 @@ RUN uv sync --frozen --no-dev
 
 # Copy the rest of the backend (exclude .venv to avoid overwriting the one we just created)
 COPY src ./src
+COPY alembic ./alembic
 COPY alembic.ini ./alembic.ini
 COPY main.py ./main.py
 COPY pytest.ini ./pytest.ini
