@@ -134,3 +134,7 @@ clean:
 start:
 	sudo service postgresql start
 	uv run uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+
+.PHONY: psql
+psql:
+	PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d public_square
