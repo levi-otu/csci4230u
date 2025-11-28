@@ -1,3 +1,5 @@
 backend/public_square/__pycache__/
 backend/public_square/main.pyc
 *.venv/
+.env*
+*.env

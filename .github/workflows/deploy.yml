@@ -1,0 +1,113 @@
+name: Build and Deploy to Cloud Run
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            id-token: write
+
+        env:
+            GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+            GCP_REGION: ${{ secrets.GCP_REGION }}
+            AR_REPO: public-square
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Auth to GCP
+              uses: google-github-actions/auth@v2
+              with:
+                  workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+                  service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+            - name: Configure Docker for Artifact Registry
+              run: |
+                  gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+            # (Optional) Backend tests with uv
+            - name: Install uv
+              run: |
+                  curl -LsSf https://astral.sh/uv/install.sh | sh
+                  echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+            - name: Backend tests
+              working-directory: ./backend
+              run: |
+                  uv sync --all-extras --dev
+                  uv run pytest
+
+            # Build & push backend image
+            - name: Build & push backend image
+              run: |
+                  BACKEND_IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${AR_REPO}/backend:${GITHUB_SHA}"
+                  echo "BACKEND_IMAGE=$BACKEND_IMAGE" >> $GITHUB_ENV
+                  docker build -t "$BACKEND_IMAGE" -f Dockerfile backend/
+                  docker push "$BACKEND_IMAGE"
+
+            # Build & push frontend image
+            - name: Build & push frontend image
+              run: |
+                  FRONTEND_IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${AR_REPO}/frontend:${GITHUB_SHA}"
+                  echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
+                  docker build -t "$FRONTEND_IMAGE" -f frontend/Dockerfile .
+                  docker push "$FRONTEND_IMAGE"
+
+            # Deploy backend Cloud Run
+            - name: Deploy backend
+              run: |
+                  CONN_NAME="$(gcloud sql instances describe public-square-sql --format='value(connectionName)')"
+                  gcloud run deploy public-square-backend \
+                    --image "$BACKEND_IMAGE" \
+                    --region "${GCP_REGION}" \
+                    --service-account cloud-run-backend-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
+                    --add-cloudsql-instances "$CONN_NAME" \
+                    --set-secrets DATABASE_URL=DATABASE_URL:latest \
+                    --set-env-vars BACKEND_CORS_ORIGINS=${{ secrets.BACKEND_CORS_ORIGINS }} \
+                    --set-env-vars SECRET_KEY=${{ secrets.SECRET_KEY }} \
+                    --set-env-vars COOKIE_SECURE=true \
+                    --set-env-vars COOKIE_SAMESITE=none \
+                    --allow-unauthenticated \
+                    --quiet
+
+            # Update & run migrations job
+            - name: Update migration job image
+              run: |
+                  CONN_NAME="$(gcloud sql instances describe public-square-sql --format='value(connectionName)')"
+                  gcloud run jobs update public-square-migrate \
+                    --image "$BACKEND_IMAGE" \
+                    --region "${GCP_REGION}" \
+                    --service-account cloud-run-backend-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
+                    --add-cloudsql-instances "$CONN_NAME" \
+                    --set-secrets DATABASE_URL=DATABASE_URL:latest \
+                    --quiet || \
+                  gcloud run jobs create public-square-migrate \
+                    --image "$BACKEND_IMAGE" \
+                    --region "${GCP_REGION}" \
+                    --service-account cloud-run-backend-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
+                    --add-cloudsql-instances "$CONN_NAME" \
+                    --set-secrets DATABASE_URL=DATABASE_URL:latest \
+                    --command "/app/.venv/bin/alembic" \
+                    --args "upgrade","head" \
+                    --quiet
+
+            - name: Run Alembic migrations
+              run: |
+                  gcloud run jobs execute public-square-migrate \
+                    --region "${GCP_REGION}" \
+                    --wait \
+                    --quiet
+
+            # Deploy frontend
+            - name: Deploy frontend
+              run: |
+                  gcloud run deploy public-square-frontend \
+                    --image "$FRONTEND_IMAGE" \
+                    --region "${GCP_REGION}" \
+                    --allow-unauthenticated \
+                    --quiet

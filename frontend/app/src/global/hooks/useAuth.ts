@@ -10,7 +10,6 @@ import {
   loginAsync,
   registerAsync,
   logoutAsync,
-  logout,
   clearError,
   fetchCurrentUserAsync,
   restoreSession,

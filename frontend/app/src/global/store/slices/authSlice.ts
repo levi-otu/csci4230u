@@ -120,7 +120,7 @@ export const logoutAsync = createAsyncThunk<
   void,
   void,
   { rejectValue: string }
->('auth/logout', async (_, { rejectWithValue }) => {
+>('auth/logout', async () => {
   try {
     // Call logout endpoint (clears httpOnly cookie)
     await httpClient.post('/api/auth/logout', {});

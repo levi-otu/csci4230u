@@ -1,0 +1,9 @@
+# Exclude local virtual environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+*.log
+.env
