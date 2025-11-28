@@ -73,6 +73,8 @@ jobs:
                     --service-account cloud-run-backend-sa@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
                     --add-cloudsql-instances "$CONN_NAME" \
                     --set-secrets DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
+                    --command "/app/.venv/bin/alembic" \
+                    --args "upgrade","head" \
                     --quiet || \
                   gcloud run jobs create public-square-migrate \
                     --image "$BACKEND_IMAGE" \
