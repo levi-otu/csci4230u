@@ -5,7 +5,6 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.club import ClubModel, UserClubModel
 from src.models.user import UserModel
 from src.storage.data.sql.clubs.storage import ClubStorage
 from src.storage.data.sql.user.clubs.storage import UserClubStorage

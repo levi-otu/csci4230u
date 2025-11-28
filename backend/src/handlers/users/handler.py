@@ -1,5 +1,4 @@
 """User handler for business logic."""
-from datetime import datetime, timezone
 from typing import List
 from uuid import UUID
 
@@ -7,7 +6,6 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.user import UserModel
-from src.security import get_password_hash, verify_password
 from src.storage.data.sql.users.storage import UserStorage, UserSecurityStorage
 from src.transports.json.user_schemas import UserResponse, UserUpdate
 

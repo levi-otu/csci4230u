@@ -7,8 +7,7 @@ import httpx
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.book import BookModel, UserBookModel, ReadingListModel
-from src.models.user import UserModel
+from src.models.book import UserBookModel
 from src.storage.data.sql.books.storage import BookStorage
 from src.storage.data.sql.user.books.storage import UserBookStorage, ReadingListStorage
 from src.transports.json.library_schemas import (
@@ -185,7 +184,7 @@ class LibraryHandler:
                     return ISBNLookupResponse(found=False)
 
                 book_data = data[book_key]
-                print(f"Extracted book_data:")
+                print("Extracted book_data:")
                 print(json.dumps(book_data, indent=2))
                 print("=" * 80)
 

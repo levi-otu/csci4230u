@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from src.config import settings
-from src.models.base import Base  # Import the shared Base from models
+from src.models.base import Base  # noqa: F401 - imported for model registration
 
 # Create async engine
 engine = create_async_engine(

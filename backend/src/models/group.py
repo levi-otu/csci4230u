@@ -1,6 +1,6 @@
 """Group models for organizing users."""
-import uuid
 from datetime import datetime
+
 
 from sqlalchemy import Column, DateTime, ForeignKey, String, Table
 from sqlalchemy.dialects.postgresql import UUID

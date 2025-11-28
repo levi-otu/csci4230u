@@ -3,7 +3,7 @@ import uuid
 from datetime import date, datetime
 
 from pydantic import BaseModel as PydanticBaseModel
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text, Table
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 

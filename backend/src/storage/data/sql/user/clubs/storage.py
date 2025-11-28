@@ -1,5 +1,4 @@
 """Storage layer for user-club associations."""
-from datetime import datetime
 from typing import Any, Optional
 from uuid import UUID
 

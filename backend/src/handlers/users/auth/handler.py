@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.user import UserModel, UserSecurityModel
+# Models imported via storage layer
 from src.security import (
     create_access_token,
     create_refresh_token,

@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.models.club import ClubModel, ClubORM, ClubMeetingModel, ClubMeetingORM
-from src.storage.data.sql.base_storage import BaseStorage
 
 
 class ClubStorage:
@@ -58,7 +57,7 @@ class ClubStorage:
             if result is None:
                 raise ValueError("Failed to create club model")
             return result
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error creating club: {e}")
             raise
 
@@ -80,7 +79,7 @@ class ClubStorage:
             result = await self.session.execute(stmt)
             orm_club = result.scalar_one_or_none()
             return self._to_domain(orm_club)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting club by id {club_id}: {e}")
             raise
 
@@ -110,7 +109,7 @@ class ClubStorage:
                 domain for orm in orm_clubs
                 if (domain := self._to_domain(orm)) is not None
             ]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting all clubs: {e}")
             raise
 
@@ -141,7 +140,7 @@ class ClubStorage:
                 await self.session.flush()
                 await self.session.refresh(orm_club)
             return self._to_domain(orm_club)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error updating club {club_id}: {e}")
             raise
 
@@ -165,7 +164,7 @@ class ClubStorage:
                 await self.session.flush()
                 return True
             return False
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error deleting club {club_id}: {e}")
             raise
 
@@ -202,7 +201,7 @@ class ClubStorage:
                 domain for orm in orm_clubs
                 if (domain := self._to_domain(orm)) is not None
             ]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting clubs by topic {topic}: {e}")
             raise
 
@@ -237,7 +236,7 @@ class ClubStorage:
                 domain for orm in orm_clubs
                 if (domain := self._to_domain(orm)) is not None
             ]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting active clubs: {e}")
             raise
 
@@ -263,7 +262,7 @@ class ClubStorage:
             result = await self.session.execute(stmt)
             orm_club = result.scalar_one_or_none()
             return self._to_domain(orm_club)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting club with members {club_id}: {e}")
             raise
 
@@ -315,7 +314,7 @@ class ClubMeetingStorage:
             if result is None:
                 raise ValueError("Failed to create club meeting model")
             return result
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error creating club meeting: {e}")
             raise
 
@@ -352,6 +351,6 @@ class ClubMeetingStorage:
                 domain for orm in orm_meetings
                 if (domain := self._to_domain(orm)) is not None
             ]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting club meetings for club {club_id}: {e}")
             raise

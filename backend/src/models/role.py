@@ -1,5 +1,4 @@
 """Role models for RBAC (Role-Based Access Control)."""
-import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, String, Table

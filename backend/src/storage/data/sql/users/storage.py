@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.models.user import UserModel, UserORM, UserSecurityModel, UserSecurityORM
-from src.storage.data.sql.base_storage import BaseStorage
 
 
 class UserStorage:
@@ -56,7 +55,7 @@ class UserStorage:
             if result is None:
                 raise ValueError("Failed to create user model")
             return result
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error creating user: {e}")
             raise
 
@@ -78,7 +77,7 @@ class UserStorage:
             result = await self.session.execute(stmt)
             orm_user = result.scalar_one_or_none()
             return self._to_domain(orm_user)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting user by id {user_id}: {e}")
             raise
 
@@ -100,7 +99,7 @@ class UserStorage:
             result = await self.session.execute(stmt)
             orm_user = result.scalar_one_or_none()
             return self._to_domain(orm_user)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting user by username {username}: {e}")
             raise
 
@@ -122,7 +121,7 @@ class UserStorage:
             result = await self.session.execute(stmt)
             orm_user = result.scalar_one_or_none()
             return self._to_domain(orm_user)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting user by email {email}: {e}")
             raise
 
@@ -148,7 +147,7 @@ class UserStorage:
             result = await self.session.execute(stmt)
             orm_user = result.scalar_one_or_none()
             return self._to_domain(orm_user)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting user with security for id {user_id}: {e}")
             raise
 
@@ -171,7 +170,7 @@ class UserStorage:
             result = await self.session.execute(stmt)
             orm_users = result.scalars().all()
             return [self._to_domain(user) for user in orm_users if user is not None]
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting all users: {e}")
             raise
 
@@ -199,7 +198,7 @@ class UserStorage:
                 await self.session.refresh(orm_user)
                 return self._to_domain(orm_user)
             return None
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error updating user {user_id}: {e}")
             raise
 
@@ -223,7 +222,7 @@ class UserStorage:
                 await self.session.flush()
                 return True
             return False
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error deleting user {user_id}: {e}")
             raise
 
@@ -273,7 +272,7 @@ class UserSecurityStorage:
             if result is None:
                 raise ValueError("Failed to create user security model")
             return result
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error creating user security: {e}")
             raise
 
@@ -295,7 +294,7 @@ class UserSecurityStorage:
             result = await self.session.execute(stmt)
             orm_security = result.scalar_one_or_none()
             return self._to_domain(orm_security)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting user security by email {email}: {e}")
             raise
 
@@ -317,6 +316,6 @@ class UserSecurityStorage:
             result = await self.session.execute(stmt)
             orm_security = result.scalar_one_or_none()
             return self._to_domain(orm_security)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as _e:
             # logger.error(f"Error getting user security by user_id {user_id}: {e}")
             raise

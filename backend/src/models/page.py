@@ -1,6 +1,5 @@
 """Page models for discussion topics."""
 import uuid
-from datetime import datetime
 
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Table

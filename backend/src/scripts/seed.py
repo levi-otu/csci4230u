@@ -3,7 +3,6 @@ import asyncio
 from datetime import datetime
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import AsyncSessionLocal
 from src.models.user import User, UserSecurity
@@ -60,10 +59,10 @@ async def seed_admin_user() -> None:
         admin_user.roles.append(admin_role)
 
         await session.commit()
-        print(f"Created admin user:")
-        print(f"  Username: admin")
-        print(f"  Email: test@example.com")
-        print(f"  Password: Admin@12345")
+        print("Created admin user:")
+        print("  Username: admin")
+        print("  Email: test@example.com")
+        print("  Password: Admin@12345")
 
 
 if __name__ == "__main__":

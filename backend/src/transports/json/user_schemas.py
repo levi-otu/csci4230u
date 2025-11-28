@@ -3,8 +3,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from src.transports.json.common import TimestampMixin
-
 
 class UserBase(BaseModel):
     """Base user schema."""
