@@ -11,7 +11,7 @@ async def test_register_user(client: AsyncClient) -> None:
         json={
             "username": "testuser",
             "email": "test@example.com",
-            "password": "testpassword123",
+            "password": "TestPassword123!",
             "full_name": "Test User"
         }
     )
@@ -31,7 +31,7 @@ async def test_register_duplicate_username(client: AsyncClient) -> None:
         json={
             "username": "testuser",
             "email": "test1@example.com",
-            "password": "testpassword123"
+            "password": "TestPassword123!"
         }
     )
 
@@ -41,7 +41,7 @@ async def test_register_duplicate_username(client: AsyncClient) -> None:
         json={
             "username": "testuser",
             "email": "test2@example.com",
-            "password": "testpassword123"
+            "password": "TestPassword123!"
         }
     )
 
@@ -58,7 +58,7 @@ async def test_login_user(client: AsyncClient) -> None:
         json={
             "username": "testuser",
             "email": "test@example.com",
-            "password": "testpassword123"
+            "password": "TestPassword123!"
         }
     )
 
@@ -67,7 +67,7 @@ async def test_login_user(client: AsyncClient) -> None:
         "/api/auth/login",
         json={
             "email": "test@example.com",
-            "password": "testpassword123"
+            "password": "TestPassword123!"
         }
     )
 

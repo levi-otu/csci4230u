@@ -8,7 +8,7 @@ async def get_auth_token(
     client: AsyncClient,
     username: str = "testuser",
     email: str = "test@example.com",
-    password: str = "testpassword123"
+    password: str = "TestPassword123!"
 ) -> str:
     """Helper to get authentication token."""
     response = await client.post(
