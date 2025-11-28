@@ -39,7 +39,7 @@ class RefreshTokenModel(BaseModel):
     ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
 
     # Relationships
-    user: Mapped["UserORM"] = relationship("UserORM", back_populates="refresh_tokens")  # type: ignore
+    user: Mapped["UserORM"] = relationship("UserORM", back_populates="refresh_tokens")  # type: ignore # noqa: F821
 
     def __repr__(self) -> str:
         """String representation of refresh token."""
