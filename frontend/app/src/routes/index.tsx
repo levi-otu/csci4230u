@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
 import { AppLayout } from '@/global/components/AppLayout';
+import { AuthGuard } from '@/global/components/AuthGuard';
 import { homeRoutes } from '@/modules/home/routes';
 import { loginRoutes } from '@/modules/login/routes';
 import { clubsRoutes } from '@/modules/clubs/routes';
@@ -18,26 +19,31 @@ const PlaceholderPage = ({ title }: { title: string }) => (
 );
 
 const routes: RouteObject[] = [
-  // Authentication routes (no layout)
+  // Public authentication routes (no layout, no auth required)
   ...loginRoutes,
-  // Protected routes with layout
+  // Protected routes with AuthGuard and layout
   {
-    element: (
-      <SidebarProvider>
-        <AppLayout />
-      </SidebarProvider>
-    ),
+    element: <AuthGuard />,
     children: [
-      ...homeRoutes,
-      ...clubsRoutes,
-      ...libraryRoutes,
       {
-        path: '/pages',
-        element: <PlaceholderPage title="Pages" />,
-      },
-      {
-        path: '/settings',
-        element: <PlaceholderPage title="Settings" />,
+        element: (
+          <SidebarProvider>
+            <AppLayout />
+          </SidebarProvider>
+        ),
+        children: [
+          ...homeRoutes,
+          ...clubsRoutes,
+          ...libraryRoutes,
+          {
+            path: '/pages',
+            element: <PlaceholderPage title="Pages" />,
+          },
+          {
+            path: '/settings',
+            element: <PlaceholderPage title="Settings" />,
+          },
+        ],
       },
     ],
   },

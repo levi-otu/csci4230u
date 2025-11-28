@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_active_user
 from src.database import get_db
-from src.handlers.users.user_handler import UserHandler
+from src.handlers.users.handler import UserHandler
 from src.models.user import UserModel
 from src.transports.json.user_schemas import UserResponse, UserUpdate
 
@@ -37,15 +37,18 @@ async def get_current_user(
 async def get_users(
     skip: int = 0,
     limit: int = 100,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> List[UserResponse]:
     """
     Get all users with pagination.
+    Requires authentication.
 
     Args:
         skip: Number of records to skip.
         limit: Maximum number of records to return.
         session: Database session.
+        current_user: Authenticated user.
 
     Returns:
         List[UserResponse]: List of users.
@@ -57,14 +60,17 @@ async def get_users(
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(
     user_id: UUID,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> UserResponse:
     """
     Get a user by ID.
+    Requires authentication.
 
     Args:
         user_id: The user ID.
         session: Database session.
+        current_user: Authenticated user.
 
     Returns:
         UserResponse: The user data.

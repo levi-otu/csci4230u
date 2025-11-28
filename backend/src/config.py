@@ -16,7 +16,13 @@ class Settings(BaseSettings):
     # JWT
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # Shorter lifespan for access tokens
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7     # Long-lived refresh tokens
+
+    # Cookie settings
+    COOKIE_SECURE: bool = False  # Set to True in production with HTTPS
+    COOKIE_SAMESITE: str = "lax"  # CSRF protection
+    COOKIE_DOMAIN: str | None = None  # Set domain if needed
 
     # Application
     APP_NAME: str = "Public Square API"

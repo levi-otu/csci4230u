@@ -9,6 +9,7 @@ import { useAppSelector } from './useAppSelector';
 import {
   loginAsync,
   registerAsync,
+  logoutAsync,
   logout,
   clearError,
   fetchCurrentUserAsync,
@@ -23,8 +24,8 @@ import type { LoginRequest, RegisterRequest } from '@/global/models/auth.models'
 export function useAuth() {
   const dispatch = useAppDispatch();
 
-  // Select auth state from Redux store
-  const { user, token, isAuthenticated, isLoading, error } = useAppSelector(
+  // Select auth state from Redux store (NO TOKEN!)
+  const { user, isAuthenticated, isLoading, error } = useAppSelector(
     (state) => state.auth
   );
 
@@ -51,10 +52,10 @@ export function useAuth() {
   );
 
   /**
-   * Logout user
+   * Logout user (async - calls API)
    */
-  const handleLogout = useCallback(() => {
-    dispatch(logout());
+  const handleLogout = useCallback(async () => {
+    await dispatch(logoutAsync());
   }, [dispatch]);
 
   /**
@@ -82,7 +83,6 @@ export function useAuth() {
   return {
     // State
     user,
-    token,
     isAuthenticated,
     isLoading,
     error,

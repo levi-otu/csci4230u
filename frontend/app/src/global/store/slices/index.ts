@@ -7,9 +7,9 @@ export {
   loginAsync,
   registerAsync,
   fetchCurrentUserAsync,
+  logoutAsync,
   logout,
   clearError,
-  setToken,
   restoreSession,
 } from './authSlice';
 

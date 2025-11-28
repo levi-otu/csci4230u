@@ -14,9 +14,4 @@ export const config = {
    * Default request timeout in milliseconds
    */
   requestTimeout: 30000,
-
-  /**
-   * Token storage key in sessionStorage
-   */
-  tokenStorageKey: 'auth_token',
 } as const;

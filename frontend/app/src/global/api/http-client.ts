@@ -88,6 +88,7 @@ export class ApiError extends Error {
  */
 export class HTTPClient {
   private axiosInstance: AxiosInstance;
+  private accessToken: string | null = null;
 
   constructor(config: HttpClientConfig = {}) {
     // Create axios instance with configuration
@@ -98,6 +99,25 @@ export class HTTPClient {
         'Content-Type': 'application/json',
       },
     });
+  }
+
+  /**
+   * Set the access token for authenticated requests
+   */
+  setAccessToken(token: string | null): void {
+    this.accessToken = token;
+    if (token) {
+      this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete this.axiosInstance.defaults.headers.common['Authorization'];
+    }
+  }
+
+  /**
+   * Get the current access token
+   */
+  getAccessToken(): string | null {
+    return this.accessToken;
   }
 
   /**
@@ -203,7 +223,7 @@ export class HTTPClient {
 }
 
 /**
- * Default HTTP client instance with auth token interceptor
+ * Default HTTP client instance with cookie-based auth and auto-refresh
  */
 export const createDefaultHttpClient = (): HTTPClient => {
   const client = new HTTPClient({
@@ -214,21 +234,19 @@ export const createDefaultHttpClient = (): HTTPClient => {
     },
   });
 
-  // Add authentication token request interceptor
-  client.addRequestInterceptor((axiosConfig) => {
-    const token = sessionStorage.getItem(config.tokenStorageKey);
+  // Enable credentials to send cookies automatically
+  client.getAxiosInstance().defaults.withCredentials = true;
 
-    if (token && axiosConfig.headers) {
-      axiosConfig.headers.Authorization = `Bearer ${token}`;
-    }
+  // Track if we're currently refreshing to avoid refresh loops
+  let isRefreshing = false;
+  let refreshPromise: Promise<string> | null = null;
 
-    return axiosConfig;
-  });
-
-  // Add response error interceptor for standardized error handling
+  // Add response error interceptor for auto-refresh and error handling
   client.addResponseInterceptor(
     (response) => response,
     async (error: AxiosError) => {
+      const originalRequest = error.config;
+
       // Convert to ApiError for consistency
       const apiError = ApiError.fromAxiosError(error);
 
@@ -237,13 +255,57 @@ export const createDefaultHttpClient = (): HTTPClient => {
         status: apiError.status,
         message: apiError.message,
         data: apiError.data,
+        url: originalRequest?.url,
       });
 
-      // Handle 401 Unauthorized - clear session
-      if (apiError.status === 401) {
-        sessionStorage.removeItem(config.tokenStorageKey);
-        // You can dispatch an event or call a logout function here
-        window.dispatchEvent(new Event('unauthorized'));
+      // Handle 401 Unauthorized - try to refresh token
+      if (apiError.status === 401 && originalRequest && !originalRequest.url?.includes('/auth/refresh')) {
+        // Avoid refresh loop
+        if (isRefreshing) {
+          // Wait for the current refresh to complete
+          try {
+            await refreshPromise;
+            // Retry original request
+            return client.getAxiosInstance().request(originalRequest);
+          } catch (refreshError) {
+            // Refresh failed, redirect to login
+            window.dispatchEvent(new Event('session-expired'));
+            window.location.href = '/login';
+            throw apiError;
+          }
+        }
+
+        isRefreshing = true;
+
+        try {
+          // Try to refresh the access token
+          refreshPromise = client.post<{ access_token: string }>('/api/auth/refresh', {})
+            .then(response => {
+              // Store the new access token
+              client.setAccessToken(response.access_token);
+              return response.access_token;
+            });
+
+          await refreshPromise;
+
+          isRefreshing = false;
+          refreshPromise = null;
+
+          // Retry the original request with new token
+          return client.getAxiosInstance().request(originalRequest);
+        } catch (refreshError) {
+          // Refresh failed - session expired
+          isRefreshing = false;
+          refreshPromise = null;
+
+          // Clear access token
+          client.setAccessToken(null);
+
+          // Dispatch event and redirect to login
+          window.dispatchEvent(new Event('session-expired'));
+          window.location.href = '/login';
+          throw apiError;
+        }
       }
 
       throw apiError;

@@ -45,15 +45,18 @@ async def create_club(
 async def get_clubs(
     skip: int = 0,
     limit: int = 100,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> List[ClubResponse]:
     """
     Get all clubs.
+    Requires authentication.
 
     Args:
         skip: Number of records to skip.
         limit: Maximum number of records to return.
         session: Database session.
+        current_user: Authenticated user.
 
     Returns:
         List[ClubResponse]: List of clubs.
@@ -65,14 +68,17 @@ async def get_clubs(
 @router.get("/{club_id}", response_model=ClubResponse)
 async def get_club(
     club_id: UUID,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> ClubResponse:
     """
     Get a club by ID.
+    Requires authentication.
 
     Args:
         club_id: The club ID.
         session: Database session.
+        current_user: Authenticated user.
 
     Returns:
         ClubResponse: The club data.
@@ -83,14 +89,17 @@ async def get_club(
 @router.get("/user/{user_id}", response_model=List[ClubResponse])
 async def get_user_clubs(
     user_id: UUID,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> List[ClubResponse]:
     """
     Get all clubs for a user.
+    Requires authentication.
 
     Args:
         user_id: The user ID.
         session: Database session.
+        current_user: Authenticated user.
 
     Returns:
         List[ClubResponse]: List of clubs for the user.
@@ -169,14 +178,17 @@ async def add_user_to_club(
 @router.get("/{club_id}/members", response_model=List[UserClubResponse])
 async def get_club_members(
     club_id: UUID,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> List[UserClubResponse]:
     """
     Get all members of a club.
+    Requires authentication.
 
     Args:
         club_id: The club ID.
         session: Database session.
+        current_user: Authenticated user.
 
     Returns:
         List[UserClubResponse]: List of club members.

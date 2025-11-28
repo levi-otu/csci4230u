@@ -3,11 +3,12 @@
  * Provides user authentication interface with glassmorphic design
  */
 
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/global/hooks/useAuth';
 import { Button } from '@/global/components/ui/button';
 import { Input } from '@/global/components/ui/input';
@@ -33,8 +34,7 @@ const loginFormSchema = z.object({
     .email('Please enter a valid email address'),
   password: z
     .string()
-    .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters'),
+    .min(1, 'Password is required'),
   rememberMe: z.boolean(),
 });
 
@@ -46,7 +46,12 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
  */
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isLoading, error, isAuthenticated, clearError } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Get the location user tried to access before being redirected to login
+  const from = (location.state as any)?.from?.pathname || '/home';
 
   // Initialize form with React Hook Form and Zod validation
   const form = useForm<LoginFormValues>({
@@ -61,9 +66,9 @@ export function Login() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/home');
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from]);
 
   // Clear API errors when form values change
   useEffect(() => {
@@ -169,14 +174,28 @@ export function Login() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter your password"
-                          autoComplete="current-password"
-                          disabled={isLoading}
-                          className="bg-background/50"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Enter your password"
+                            autoComplete="current-password"
+                            disabled={isLoading}
+                            className="bg-background/50 pr-10"
+                            {...field}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            tabIndex={-1}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

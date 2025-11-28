@@ -4,7 +4,7 @@
  */
 
 import type { RouteObject } from 'react-router-dom';
-import { Login } from './pages/Login';
+import { Login, Register } from './pages';
 
 /**
  * Login routes configuration
@@ -19,17 +19,9 @@ export const loginRoutes: RouteObject[] = [
     path: '/login',
     element: <Login />,
   },
-  // Register route placeholder - to be implemented
   {
     path: '/register',
-    element: (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Register</h1>
-          <p className="text-muted-foreground">Coming soon...</p>
-        </div>
-      </div>
-    ),
+    element: <Register />,
   },
   // Forgot password route placeholder
   {

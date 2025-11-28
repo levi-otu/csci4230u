@@ -52,9 +52,13 @@ async def create_book(
 async def get_books(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> List[BookResponse]:
-    """Get all books from the catalog."""
+    """
+    Get all books from the catalog.
+    Requires authentication.
+    """
     handler = LibraryHandler(session)
     return await handler.get_books(skip=skip, limit=limit)
 
@@ -62,9 +66,13 @@ async def get_books(
 @router.get("/books/{book_id}", response_model=BookResponse)
 async def get_book(
     book_id: UUID,
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_active_user)
 ) -> BookResponse:
-    """Get a specific book by ID."""
+    """
+    Get a specific book by ID.
+    Requires authentication.
+    """
     handler = LibraryHandler(session)
     return await handler.get_book(book_id)
 

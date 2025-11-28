@@ -40,6 +40,11 @@ class UserORM(BaseModel):
         uselist=False,
         cascade="all, delete-orphan"
     )
+    refresh_tokens = relationship(
+        "RefreshTokenModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
     clubs = relationship(
         "ClubORM",
         secondary="user_clubs",
