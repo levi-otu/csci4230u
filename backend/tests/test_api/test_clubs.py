@@ -77,7 +77,10 @@ async def test_get_clubs(client: AsyncClient) -> None:
     )
 
     # Get clubs
-    response = await client.get("/api/clubs")
+    response = await client.get(
+        "/api/clubs",
+        headers={"Authorization": f"Bearer {token}"}
+    )
 
     assert response.status_code == 200
     data = response.json()
@@ -103,7 +106,10 @@ async def test_get_club_by_id(client: AsyncClient) -> None:
     club_id = create_response.json()["id"]
 
     # Get the club by ID
-    response = await client.get(f"/api/clubs/{club_id}")
+    response = await client.get(
+        f"/api/clubs/{club_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
 
     assert response.status_code == 200
     data = response.json()
@@ -170,7 +176,10 @@ async def test_delete_club(client: AsyncClient) -> None:
     assert response.status_code == 204
 
     # Verify club is deleted
-    get_response = await client.get(f"/api/clubs/{club_id}")
+    get_response = await client.get(
+        f"/api/clubs/{club_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert get_response.status_code == 404
 
 
@@ -257,7 +266,10 @@ async def test_get_club_members(client: AsyncClient) -> None:
     )
 
     # Get club members
-    response = await client.get(f"/api/clubs/{club_id}/members")
+    response = await client.get(
+        f"/api/clubs/{club_id}/members",
+        headers={"Authorization": f"Bearer {owner_token}"}
+    )
 
     assert response.status_code == 200
     data = response.json()
@@ -316,7 +328,10 @@ async def test_get_user_clubs(client: AsyncClient) -> None:
     )
 
     # Get user's clubs
-    response = await client.get(f"/api/clubs/user/{member_id}")
+    response = await client.get(
+        f"/api/clubs/user/{member_id}",
+        headers={"Authorization": f"Bearer {member_token}"}
+    )
 
     assert response.status_code == 200
     data = response.json()
@@ -469,8 +484,12 @@ async def test_create_club_unauthorized(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_get_nonexistent_club(client: AsyncClient) -> None:
     """Test getting a club that doesn't exist."""
+    token = await get_auth_token(client, "user_nonexist", "usernonexist@example.com")
     fake_club_id = str(uuid4())
-    response = await client.get(f"/api/clubs/{fake_club_id}")
+    response = await client.get(
+        f"/api/clubs/{fake_club_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
 
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()

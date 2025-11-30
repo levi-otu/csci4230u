@@ -27,6 +27,7 @@ from src.models import (  # noqa: F401
     UserORM,
     UserSecurityORM,
 )
+from src.models.refresh_token import RefreshTokenModel  # noqa: F401
 
 # Create test database engine
 test_engine = create_async_engine(

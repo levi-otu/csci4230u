@@ -1,4 +1,5 @@
 """Security utilities for JWT authentication and password hashing."""
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
@@ -97,7 +98,13 @@ def create_refresh_token(
             days=settings.REFRESH_TOKEN_EXPIRE_DAYS
         )
 
-    to_encode = {"exp": expire, "sub": str(subject), "type": "refresh"}
+    # Add jti (JWT ID) claim for uniqueness to prevent hash collisions
+    to_encode = {
+        "exp": expire,
+        "sub": str(subject),
+        "type": "refresh",
+        "jti": str(uuid.uuid4())
+    }
     encoded_jwt = jwt.encode(
         to_encode,
         settings.SECRET_KEY,
