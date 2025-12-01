@@ -43,7 +43,9 @@ jobs:
               run: |
                   FRONTEND_IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${AR_REPO}/frontend:${GITHUB_SHA}"
                   echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
-                  docker build -t "$FRONTEND_IMAGE" -f frontend/app/Dockerfile frontend/app/
+                  docker build -t "$FRONTEND_IMAGE" \
+                    --build-arg VITE_API_BASE_URL=https://public-square-backend-940756986344.northamerica-northeast1.run.app \
+                    -f frontend/app/Dockerfile frontend/app/
                   docker push "$FRONTEND_IMAGE"
 
             # Deploy backend Cloud Run
