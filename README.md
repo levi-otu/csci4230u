@@ -13,13 +13,15 @@ The core requirements for the final project are as follows.
 - [x] Clear and well-structured API endpoints
 - [x] Proper use of HTTP methods (GET, POST, PUT, DELETE)
 - [x] Integration with at least one external API
-- [ ] Documentation of the API endpoints
+- [x] Documentation of the API endpoints
+  - Auto-generated with FastAPI at `/docs` (Swagger UI) and `/redoc` (ReDoc)
 
 #### Architectural Design (15%)
 
 - [x] Implementation of chosen architecture (e.g., Microservices, Monolithic, MVC)
 - [x] Proper separation of concerns (frontend, backend, database)
-- [ ] Diagram and explanation of the chosen architecture (UML package and class diagrams)
+- [x] Diagram and explanation of the chosen architecture (UML package and class diagrams)
+  - See [ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 #### Authentication and Security (10%)
 
@@ -43,10 +45,11 @@ The core requirements for the final project are as follows.
 #### Deployment and DevOps (10%)
 
 - [x] Deployment to a cloud platform or a general-purpose server
+  - https://public-square-frontend-940756986344.northamerica-northeast1.run.app/
 - [x] Use of Docker for deployment consistency
 - [x] Setup of a CI/CD pipeline
-- [ ] Documentation of deployment process
-- [ ] Use of HTTPS with either HTTP/2 or HTTP/3
+- [x] Documentation of deployment process
+- [x] Use of HTTPS with either HTTP/2 or HTTP/3
 
 #### Performance Optimization (5%)
 
@@ -58,13 +61,14 @@ The core requirements for the final project are as follows.
 
 - [x] Use of Git and GitHub/GitLab for version control
 - [x] Regular commits with clear messages
-- [ ] Properly documented README file with project setup instructions
+- [x] Properly documented README file with project setup instructions
+  - See [GETTING_STARTED.md](docs/GETTING_STARTED.md)
 
 #### Code Quality and Documentation (5%)
 
 - [x] Proper use of comments and docstrings
 - [x] Adherence to coding standards and best practices (e.g., PEP 8 for Python)
-- [ ] Comprehensive project documentation, including setup, usage, and architecture
+- [x] Comprehensive project documentation, including setup, usage, and architecture
 
 #### Presentation and Demonstration (15%)
 
@@ -80,6 +84,18 @@ Project Name: **_The Public Square_**
 Our project idea is to build a book club web application. The core concepts in the app will be to allow for the formulation of groups, discussion of topics in themes (think reddit but for book/theme discussion pages), and a meeting scheduler to allow users to schedule regular meeting times for their clubs. Integrated with the club and discussion features is the users library. This is where a user can create a digital version of their personal collection of books. We've included ISBN lookup for easy integration of books published since the late 1960s. Extending this feature can allow for batch upload of ISBNs and even multi-modal AI technology that allows for ISBN lookup by image (think- take a picture of your bookshelf and the system would add it to your app library).Other ambitions would be to implement WebRTC for real-time video streaming.
 
 We'll add some CI/CD pipelines to allow for the deployment of new versions and set automated deployment dependent on tests passing.
+
+## Getting Started
+
+For complete setup instructions including backend, frontend, and Docker setup, see **[GETTING_STARTED.md](docs/GETTING_STARTED.md)**.
+
+**Quick Links:**
+
+- [Prerequisites](docs/GETTING_STARTED.md#prerequisites)
+- [Backend Setup](docs/GETTING_STARTED.md#backend-setup)
+- [Frontend Setup](docs/GETTING_STARTED.md#frontend-setup)
+- [Running the Full Stack](docs/GETTING_STARTED.md#running-the-full-stack)
+- [Troubleshooting](docs/GETTING_STARTED.md#troubleshooting)
 
 ### Features
 
@@ -401,6 +417,32 @@ backend/
 
 Local development makes use of a Makefile that will setup the environments, install dependencies, run migrations, and deploy to the server. The use of CMake greatly helps new dev onboarding with simplifying common sets of commands used for setup.
 
+### API Documentation
+
+The Public Square API provides auto-generated interactive documentation powered by FastAPI:
+
+**Swagger UI** - Interactive API testing interface
+
+- Production: `https://public-square-backend-940756986344.northamerica-northeast1.run.app/docs`
+- Local: `http://localhost:8000/docs`
+- Features:
+  - Try endpoints directly in your browser
+  - View request/response schemas
+  - Test authentication flows
+  - See all available endpoints organized by tags
+
+**ReDoc** - Clean, readable API reference
+
+- Production: `https://public-square-backend-940756986344.northamerica-northeast1.run.app/redoc`
+- Local: `http://localhost:8000/redoc`
+- Features:
+  - Professional documentation layout
+  - Better for reading and sharing
+  - Printable format
+  - Three-panel design with navigation
+
+Both documentation interfaces are automatically generated from the FastAPI application's route definitions, Pydantic models, and docstrings.
+
 ### Quality Standards
 
 - Adherence to defined code standards:
@@ -445,7 +487,3 @@ The workflow will:
 5. ✅ Update/create database migration Cloud Run Job
 6. ✅ Run database migrations
 7. ✅ Deploy frontend to Cloud Run
-
-```
-
-```
