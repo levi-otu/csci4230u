@@ -1,5 +1,4 @@
 """Security module tests for coverage."""
-import pytest
 from datetime import timedelta
 from jose import jwt
 
@@ -10,7 +9,6 @@ from src.security import (
     get_password_hash,
     verify_token
 )
-from src.config import settings
 
 
 def test_create_access_token():

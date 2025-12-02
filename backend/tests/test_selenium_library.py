@@ -1,6 +1,5 @@
 """Selenium end-to-end tests for library functionality."""
 import time
-from typing import Any
 
 import pytest
 import requests

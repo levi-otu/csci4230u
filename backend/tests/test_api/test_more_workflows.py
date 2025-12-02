@@ -1,7 +1,6 @@
 """Additional workflow tests to increase handler and storage coverage."""
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 
 async def create_auth_user(client: AsyncClient, username: str, email: str) -> tuple[str, str]:
@@ -407,4 +406,4 @@ async def test_reading_list_default_flag(client: AsyncClient) -> None:
     )
     assert response.status_code == 201
     data = response.json()
-    assert data["is_default"] == True
+    assert data["is_default"] is True

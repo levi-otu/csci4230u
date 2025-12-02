@@ -1,7 +1,6 @@
 """Comprehensive library API tests for existing endpoints."""
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 
 async def register_user(client: AsyncClient, username: str, email: str) -> tuple[str, str]:

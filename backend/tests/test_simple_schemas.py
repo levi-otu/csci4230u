@@ -1,5 +1,5 @@
 """Simple schema instantiation tests for coverage."""
-from datetime import date, datetime
+from datetime import datetime
 from uuid import uuid4
 
 # Import all schemas to test them
