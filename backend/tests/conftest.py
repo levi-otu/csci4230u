@@ -1,12 +1,19 @@
 """Pytest configuration and fixtures."""
 import asyncio
+import multiprocessing
+import time
 from typing import AsyncGenerator, Generator
 
 import pytest
+import uvicorn
 from httpx import ASGITransport, AsyncClient
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.service import Service as ChromeService
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
+from webdriver_manager.chrome import ChromeDriverManager
 
 from src.config import settings
 from src.database import Base, get_db
@@ -243,3 +250,65 @@ async def user_book(client: AsyncClient, auth_headers: dict, sample_book: dict) 
 
     assert response.status_code == 201
     return response.json()
+
+
+# Selenium-specific fixtures
+
+def run_server(port: int = 8001):
+    """Run FastAPI server in a separate process."""
+    uvicorn.run(app, host="127.0.0.1", port=port, log_level="info")
+
+
+@pytest.fixture(scope="function")
+def test_server():
+    """
+    Start FastAPI server in background for Selenium tests.
+
+    Yields:
+        str: Base URL of the running server.
+    """
+    port = 8001
+    server_process = multiprocessing.Process(target=run_server, args=(port,))
+    server_process.start()
+
+    # Wait for server to start
+    time.sleep(3)
+
+    base_url = f"http://127.0.0.1:{port}"
+
+    yield base_url
+
+    # Cleanup
+    server_process.terminate()
+    server_process.join(timeout=5)
+    if server_process.is_alive():
+        server_process.kill()
+
+
+@pytest.fixture(scope="function")
+def selenium_driver():
+    """
+    Create a Selenium WebDriver instance.
+
+    Yields:
+        webdriver.Chrome: Chrome WebDriver instance.
+    """
+    # Configure Chrome options
+    chrome_options = ChromeOptions()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--window-size=1920,1080")
+
+    # Create WebDriver
+    service = ChromeService(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    # Set implicit wait
+    driver.implicitly_wait(10)
+
+    yield driver
+
+    # Cleanup
+    driver.quit()

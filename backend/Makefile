@@ -9,7 +9,10 @@ help:
 	@echo "  make create-db      - Create database and user (interactive)"
 	@echo "  make configure-env  - Generate .env file template"
 	@echo "  make migrate        - Run database migrations"
-	@echo "  make test           - Run tests"
+	@echo "  make test           - Run all tests (including Selenium)"
+	@echo "  make test-no-selenium - Run tests excluding Selenium (better coverage)"
+	@echo "  make test-selenium  - Run only Selenium end-to-end tests"
+	@echo "  make test-fast      - Run tests without coverage reporting"
 	@echo "  make clean          - Clean up generated files"
 	@echo "  make start          - Start the application server and PostgreSQL service"
 
@@ -122,6 +125,18 @@ migrate:
 # Run tests
 test:
 	uv run pytest
+
+# Run tests excluding Selenium (better coverage)
+test-no-selenium:
+	uv run pytest -m "not selenium"
+
+# Run only Selenium tests
+test-selenium:
+	uv run pytest -m selenium -v -s
+
+# Run tests without coverage (faster)
+test-fast:
+	uv run pytest --no-cov
 
 # Clean up
 clean:

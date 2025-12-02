@@ -38,9 +38,10 @@ The core requirements for the final project are as follows.
 
 #### Testing and Quality Assurance (10%)
 
-- [ ] Unit tests covering core functionalities
-- [ ] Integration tests for API endpoints
-- [ ] End-to-end tests with Selenium
+- [x] Unit tests covering core functionalities
+- [x] Integration tests for API endpoints
+- [x] End-to-end tests with Selenium
+  - See [backend/tests/SELENIUM_README.md](backend/tests/SELENIUM_README.md)
 
 #### Deployment and DevOps (10%)
 
@@ -72,10 +73,10 @@ The core requirements for the final project are as follows.
 
 #### Presentation and Demonstration (15%)
 
-- [ ] Clear and organized presentation of the project
-- [ ] Demonstration of key features
-- [ ] Explanation of design decisions and challenges faced
-- [ ] Q&A session to assess understanding and depth of knowledge
+- [x] Clear and organized presentation of the project
+- [x] Demonstration of key features
+- [x] Explanation of design decisions and challenges faced
+- [x] Q&A session to assess understanding and depth of knowledge
 
 ## Project Overview
 
